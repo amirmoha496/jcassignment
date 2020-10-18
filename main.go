@@ -4,6 +4,8 @@ import (
 	"context"
 	"net/http"
 	"os"
+
+	"github.com/gorilla/mux"
 )
 
 var hm HandlerManager = HandlerManager{}
@@ -13,22 +15,23 @@ func main() {
 	//It is for heroku
 	port := os.Getenv("PORT")
 	if port == "" {
-		getLogger().Error("Unable to fetch port from environmental variable PORT now will run default on 8080")
+		getLogger().Info("Unable to fetch port from environmental variable PORT now will run default on 8080")
 		port = ":8080"
 	} else {
 		port = ":" + port
 	}
 
-	mux := http.NewServeMux()
-	srv := http.Server{Addr: port, Handler: mux}
+	rtr := mux.NewRouter()
+	srv := http.Server{Addr: port}
 
-	mux.HandleFunc("/hash", hm.EncodePasswordHandler)
-	mux.HandleFunc("/hash/1", hm.GetHashHandler)
-	mux.HandleFunc("/stats", hm.StatsHandler)
-	mux.HandleFunc("/shutdown", func(w http.ResponseWriter, r *http.Request) {
+	rtr.HandleFunc("/hash", hm.EncodePasswordHandler)
+	rtr.HandleFunc("/hash/{id:[0-9]+}", hm.GetHashHandler)
+	rtr.HandleFunc("/stats", hm.StatsHandler)
+	rtr.HandleFunc("/shutdown", func(w http.ResponseWriter, r *http.Request) {
 		getLogger().Info("Shutting Down Server")
 		srv.Shutdown(context.Background())
 	})
+	http.Handle("/", rtr)
 
 	err := srv.ListenAndServe()
 

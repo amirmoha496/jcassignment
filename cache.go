@@ -3,7 +3,6 @@ package main
 import (
 	"errors"
 	"strconv"
-	"time"
 )
 
 var database map[int64]Hash = make(map[int64]Hash)
@@ -20,11 +19,9 @@ type Hash struct {
 
 //PutCache It stores the sequence number and the hash of the password into the in memory cache
 //k -> the sequence number for the password hashing operation
-//v -> the computed hash for the given sequence number
-func (cm CacheManager) PutCache(k int64, v string) {
-	hash := Hash{sha2: v}
-	hash.active = time.Now().Unix() + defaultWait
-	database[k] = hash
+//v -> the Hash struct for the given sequence
+func (cm CacheManager) PutCache(k int64, v Hash) {
+	database[k] = v
 	getLogger().Debug("Persisted in cache for sequence:" + strconv.FormatInt(k, 10))
 }
 
@@ -39,5 +36,3 @@ func (cm CacheManager) GetCache(k int64) (Hash, error) {
 	getLogger().Debug("Not found in cache for sequence:" + strconv.FormatInt(k, 10))
 	return Hash{}, errors.New("Not Found")
 }
-
-const defaultWait int64 = 5000

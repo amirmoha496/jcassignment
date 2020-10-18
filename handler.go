@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
+
+	"github.com/gorilla/mux"
 )
 
 var sm ServiceManager = ServiceManager{}
@@ -42,7 +44,9 @@ func (hm HandlerManager) GetHashHandler(res http.ResponseWriter, req *http.Reque
 		return
 	}
 
-	sha2, err := sm.GetHashForID(1)
+	params := mux.Vars(req)
+	id, _ := strconv.ParseInt(params["id"], 10, 64)
+	sha2, err := sm.GetHashForID(id)
 
 	if err != nil {
 		res.WriteHeader(http.StatusNotFound)

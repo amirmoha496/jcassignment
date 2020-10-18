@@ -21,7 +21,9 @@ func (sm ServiceManager) HashPassword(pwd string) int64 {
 	start := time.Now().UnixNano()
 	sha2 := crm.SHA2Hash(pwd)
 	k := mdm.Increment()
-	cm.PutCache(k, sha2)
+	active := time.Now().Unix() + defaultWait
+	hash := Hash{active: active, sha2: sha2}
+	cm.PutCache(k, hash)
 	end := time.Now().UnixNano()
 	callTime := (end - start) / 1000
 	getLogger().Debug("Calltime for sequence number:" + strconv.FormatInt(k, 10) + " microSecs:" + strconv.FormatInt(callTime, 10))
@@ -36,7 +38,8 @@ func (sm ServiceManager) GetHashForID(id int64) (string, error) {
 	if error != nil {
 		return "", error
 	}
-	if hash.active >= time.Now().Unix() {
+	now := time.Now().Unix()
+	if hash.active < now {
 		return hash.sha2, nil
 	}
 
@@ -59,3 +62,5 @@ func (sm ServiceManager) GetStatistics() (string, error) {
 	out := string(ret)
 	return out, nil
 }
+
+const defaultWait int64 = 5
