@@ -13,10 +13,10 @@ func getLogger() *Logger {
 	var infoLog *log.Logger
 	var debugLog *log.Logger
 	if logger == nil {
-		errorLog = log.New(os.Stdout, "ERROR: ", log.Ldate|log.Ltime|log.Lshortfile)
-		warnLog = log.New(os.Stdout, "WARN: ", log.Ldate|log.Ltime|log.Lshortfile)
-		infoLog = log.New(os.Stdout, "INFO: ", log.Ldate|log.Ltime|log.Lshortfile)
-		debugLog = log.New(os.Stdout, "DEBUG: ", log.Ldate|log.Ltime|log.Lshortfile)
+		errorLog = log.New(os.Stdout, "ERROR: ", log.Ldate|log.Ltime)
+		warnLog = log.New(os.Stdout, "WARN: ", log.Ldate|log.Ltime)
+		infoLog = log.New(os.Stdout, "INFO: ", log.Ldate|log.Ltime)
+		debugLog = log.New(os.Stdout, "DEBUG: ", log.Ldate|log.Ltime)
 
 		l := Logger{debugLog: debugLog, infoLog: infoLog, warnLog: warnLog, errorLog: errorLog}
 		logger = &l
