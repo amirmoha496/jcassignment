@@ -1,10 +1,13 @@
 # jcassignment
 
 First Install this dependency 
+
+#Run fallowing command
 go get -u github.com/gorilla/mux
 
 To run the application locally
 
+#Run fallowing command
 $ chmod +x run.sh
 $ ./run.sh
 
